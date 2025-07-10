@@ -60,9 +60,12 @@
 
 
         .timer-wrapper {
-            background-color: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            /* --- 타이머 투명도 및 블러 조절 --- */
+            /* 배경색의 투명도: 아래 rgba의 마지막 값을 0에 가깝게 할수록 더 투명해집니다. (예: 0.3) */
+            background-color: rgba(0, 0, 0, 0.3);
+            /* 배경 흐림 효과: 아래 blur 값을 낮출수록 배경이 더 선명해집니다. (예: 5px) */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(8px);
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -86,12 +89,7 @@
             transition: color 0.3s, text-shadow 0.3s;
         }
         
-        /* --- 타이머 숫자 반짝임 효과 --- */
         .display.finished {
-            /* * 주석: 반짝임 효과 조절
-             * animation: [애니메이션 이름] [1회당 지속시간] [반복 횟수];
-             * 예: 1초 주기로 5번 반짝이게 하려면 -> animation: text-flash-effect 1s 5;
-             */
             animation: text-flash-effect 1.5s 4;
         }
         
@@ -352,11 +350,6 @@
         displayElement.classList.add('finished');
         playSound();
 
-        /*
-         * 주석: 효과 종료 후 리셋까지의 시간 조절
-         * 아래 숫자를 변경하여, 효과가 모두 끝난 뒤 얼마 후에 타이머가 초기화될지 결정합니다.
-         * 예: 6초 후에 리셋하려면 -> setTimeout(resetTimer, 6000);
-         */
         setTimeout(resetTimer, 6000); 
     }
 
@@ -395,11 +388,6 @@
 
             Tone.Transport.start();
 
-            /*
-             * 주석: 소리 지속 시간 조절
-             * 아래 숫자를 변경하여 소리가 몇 초 동안 울릴지 결정합니다.
-             * 예: 7초 동안 울리게 하려면 -> Tone.Transport.scheduleOnce(..., 7);
-             */
             Tone.Transport.scheduleOnce(() => {
                 Tone.Transport.stop();
                 bellSequence.dispose();
