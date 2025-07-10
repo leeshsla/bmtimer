@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>새로운 맞춤형 타이머</title>
+    <title>시계탑 타이머</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Roboto+Mono:wght@700&display=swap');
@@ -38,9 +38,9 @@
             background: none;
             border: 2px solid rgba(255, 255, 255, 0.4);
             color: rgba(255, 255, 255, 0.6);
-            padding: 12px 30px; /* 크기 키움 */
+            padding: 12px 30px;
             border-radius: 50px;
-            font-size: 20px; /* 글씨 크기 키움 */
+            font-size: 20px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -67,7 +67,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #ffffff;
             padding: 30px 40px;
-            width: 380px; /* 전체 너비 확장 */
+            width: 380px;
             box-sizing: border-box;
             text-align: center;
         }
@@ -77,11 +77,24 @@
             justify-content: center;
             align-items: center;
             font-family: 'Roboto Mono', monospace;
-            font-size: 72px; /* 숫자 글씨 크기 키움 */
+            font-size: 72px;
             font-weight: 700;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
             margin-bottom: 25px;
             gap: 15px;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        
+        /* --- 타이머 숫자 반짝임 효과 (5초) --- */
+        .display.finished {
+            animation: text-flash-effect 1s 5; /* 1초 주기로 5번 반복 = 5초 */
+        }
+        
+        @keyframes text-flash-effect {
+            50% {
+                color: #ff6b6b;
+                text-shadow: 0 0 20px #ff6b6b;
+            }
         }
         
         .display .colon {
@@ -96,14 +109,14 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 8px; /* 화살표 간격 조정 */
+            gap: 8px;
         }
 
         .arrow-btn {
             background: none;
             border: none;
             color: white;
-            font-size: 28px; /* 화살표 크기 키움 */
+            font-size: 28px;
             cursor: pointer;
             padding: 0;
             line-height: 1;
@@ -131,7 +144,7 @@
             padding: 12px 10px;
             white-space: nowrap;
             border-radius: 8px;
-            font-size: 16px; /* 글씨 크기 키움 */
+            font-size: 16px;
             font-weight: 700;
             cursor: pointer;
             transition: background-color 0.2s;
@@ -151,8 +164,8 @@
         }
 
         .controls button {
-            padding: 14px; /* 버튼 크기 키움 */
-            font-size: 18px; /* 글씨 크기 키움 */
+            padding: 14px;
+            font-size: 18px;
             font-weight: 700;
             border: none;
             border-radius: 8px;
@@ -225,6 +238,7 @@
 </div>
 
 <script>
+    const displayElement = document.querySelector('.display');
     const minutesDisplay = document.getElementById('minutes');
     const secondsDisplay = document.getElementById('seconds');
     const startPauseBtn = document.getElementById('start-pause-btn');
@@ -286,6 +300,7 @@
             return;
         }
         
+        displayElement.classList.remove('finished');
         startPauseBtn.textContent = '일시정지';
         startPauseBtn.classList.add('pause');
         setAdjustmentButtonsState(true);
@@ -314,6 +329,7 @@
         resetBtn.disabled = true;
         setAdjustmentButtonsState(false);
         setModeButtonsState(false);
+        displayElement.classList.remove('finished');
     }
 
     function countdown() {
@@ -323,10 +339,19 @@
         if (totalSeconds <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
-            playSound();
+            finishTimer();
+        }
+    }
+    
+    function finishTimer() {
+        displayElement.classList.add('finished');
+        playSound();
+
+        // 5초(반짝임) 후에 알림창 띄우고 리셋
+        setTimeout(() => {
             alert("타이머가 종료되었습니다!");
             resetTimer();
-        }
+        }, 5000); 
     }
 
     function updateDisplay(seconds) {
@@ -349,8 +374,28 @@
 
     function playSound() {
         try {
-            const synth = new Tone.Synth().toDestination();
-            synth.triggerAttackRelease("C5", "8n");
+            // --- 둔탁하고 웅장한 시계탑 종소리 (7초) ---
+            const volume = new Tone.Volume(12).toDestination(); // 소리 키움
+            const reverb = new Tone.Reverb(5).connect(volume); // 울림 효과
+            
+            const synth = new Tone.MembraneSynth({
+                pitchDecay: 0.1,
+                octaves: 6,
+                envelope: { attack: 0.01, decay: 0.8, sustain: 0.1, release: 2 }
+            }).connect(reverb);
+
+            const bellSequence = new Tone.Sequence((time, note) => {
+                synth.triggerAttackRelease(note, "1n", time);
+            }, ["G2", "G2", "G2", "G2", "G2"], "1.4s").start(0);
+
+            Tone.Transport.start();
+
+            // 7초 후에 소리 멈춤
+            Tone.Transport.scheduleOnce(() => {
+                Tone.Transport.stop();
+                bellSequence.dispose();
+            }, 7);
+
         } catch (e) {
             console.error("알림음 재생에 실패했습니다.", e);
         }
