@@ -32,6 +32,7 @@
             flex-direction: column;
             align-items: center;
             gap: 20px;
+            transform: scale(1.2);
         }
 
         .mode-btn {
@@ -85,9 +86,13 @@
             transition: color 0.3s, text-shadow 0.3s;
         }
         
-        /* --- 타이머 숫자 반짝임 효과 (5초) --- */
+        /* --- 타이머 숫자 반짝임 효과 --- */
         .display.finished {
-            animation: text-flash-effect 1s 5; /* 1초 주기로 5번 반복 = 5초 */
+            /* * 주석: 반짝임 효과 조절
+             * animation: [애니메이션 이름] [1회당 지속시간] [반복 횟수];
+             * 예: 1초 주기로 5번 반짝이게 하려면 -> animation: text-flash-effect 1s 5;
+             */
+            animation: text-flash-effect 1.5s 4;
         }
         
         @keyframes text-flash-effect {
@@ -347,11 +352,12 @@
         displayElement.classList.add('finished');
         playSound();
 
-        // 5초(반짝임) 후에 알림창 띄우고 리셋
-        setTimeout(() => {
-            alert("타이머가 종료되었습니다!");
-            resetTimer();
-        }, 5000); 
+        /*
+         * 주석: 효과 종료 후 리셋까지의 시간 조절
+         * 아래 숫자를 변경하여, 효과가 모두 끝난 뒤 얼마 후에 타이머가 초기화될지 결정합니다.
+         * 예: 6초 후에 리셋하려면 -> setTimeout(resetTimer, 6000);
+         */
+        setTimeout(resetTimer, 6000); 
     }
 
     function updateDisplay(seconds) {
@@ -374,9 +380,8 @@
 
     function playSound() {
         try {
-            // --- 둔탁하고 웅장한 시계탑 종소리 (7초) ---
-            const volume = new Tone.Volume(12).toDestination(); // 소리 키움
-            const reverb = new Tone.Reverb(5).connect(volume); // 울림 효과
+            const volume = new Tone.Volume(12).toDestination();
+            const reverb = new Tone.Reverb(4).connect(volume);
             
             const synth = new Tone.MembraneSynth({
                 pitchDecay: 0.1,
@@ -386,15 +391,19 @@
 
             const bellSequence = new Tone.Sequence((time, note) => {
                 synth.triggerAttackRelease(note, "1n", time);
-            }, ["G2", "G2", "G2", "G2", "G2"], "1.4s").start(0);
+            }, ["G2", "G2", "G2", "G2"], "1.5s").start(0);
 
             Tone.Transport.start();
 
-            // 7초 후에 소리 멈춤
+            /*
+             * 주석: 소리 지속 시간 조절
+             * 아래 숫자를 변경하여 소리가 몇 초 동안 울릴지 결정합니다.
+             * 예: 7초 동안 울리게 하려면 -> Tone.Transport.scheduleOnce(..., 7);
+             */
             Tone.Transport.scheduleOnce(() => {
                 Tone.Transport.stop();
                 bellSequence.dispose();
-            }, 7);
+            }, 6);
 
         } catch (e) {
             console.error("알림음 재생에 실패했습니다.", e);
