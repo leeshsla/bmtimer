@@ -27,12 +27,68 @@
             align-items: center;
         }
         
-        .main-content-wrapper {
+        .overall-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
             transform: scale(1.2);
+        }
+
+        .game-setup-wrapper {
+            background-color: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .player-count-selector label {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .player-count-selector select {
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        /* --- 드롭다운 옵션 배경색 추가 --- */
+        .player-count-selector select option {
+            background-color: #333;
+        }
+        
+        .role-counts-display {
+            display: flex;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .role-blue {
+            color: #63b3ed;
+        }
+
+        .role-red {
+            color: #fc8181;
+        }
+        
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
         }
 
         .mode-btn {
@@ -60,11 +116,8 @@
 
 
         .timer-wrapper {
-            /* --- 타이머 투명도 및 블러 조절 --- */
-            /* 배경색의 투명도: 아래 rgba의 마지막 값을 0에 가깝게 할수록 더 투명해집니다. (예: 0.3) */
-            background-color: rgba(0, 0, 0, 0.3);
-            /* 배경 흐림 효과: 아래 blur 값을 낮출수록 배경이 더 선명해집니다. (예: 5px) */
-            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
@@ -208,39 +261,82 @@
 <body>
 
 <div class="background-container">
-    <div class="main-content-wrapper">
-        <button class="mode-btn active" id="mode-private">밀담 시간</button>
-        <div class="timer-wrapper">
-            <div class="display">
-                <div class="arrow-column">
-                    <button class="arrow-btn up" data-unit="minutes" data-change="1">▲</button>
-                    <button class="arrow-btn down" data-unit="minutes" data-change="-1">▼</button>
-                </div>
-                <span id="minutes">00</span>
-                <span class="colon">:</span>
-                <span id="seconds">00</span>
-                <div class="arrow-column">
-                     <button class="arrow-btn up" data-unit="seconds" data-change="1">▲</button>
-                     <button class="arrow-btn down" data-unit="seconds" data-change="-1">▼</button>
-                </div>
+    <div class="overall-container">
+        <div class="game-setup-wrapper">
+            <div class="player-count-selector">
+                <label for="player-count">인원:</label>
+                <select id="player-count">
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                </select>
             </div>
-            
-            <div class="quick-add">
-                <button class="time-btn" data-seconds="300">+5분</button>
-                <button class="time-btn" data-seconds="-300">-5분</button>
-                <button class="time-btn" data-seconds="10">+10초</button>
-                <button class="time-btn" data-seconds="-10">-10초</button>
-            </div>
-            <div class="controls">
-                <button id="start-pause-btn">시작</button>
-                <button id="reset-btn" disabled>리셋</button>
+            <div id="role-counts" class="role-counts-display">
+                <span class="role-blue" id="role1"></span>
+                <span class="role-blue" id="role2"></span>
+                <span class="role-red" id="role3"></span>
+                <span class="role-red" id="role4"></span>
             </div>
         </div>
-        <button class="mode-btn" id="mode-public">지명 시간</button>
+
+        <div class="main-content-wrapper">
+            <button class="mode-btn active" id="mode-private">밀담 시간</button>
+            <div class="timer-wrapper">
+                <div class="display">
+                    <div class="arrow-column">
+                        <button class="arrow-btn up" data-unit="minutes" data-change="1">▲</button>
+                        <button class="arrow-btn down" data-unit="minutes" data-change="-1">▼</button>
+                    </div>
+                    <span id="minutes">00</span>
+                    <span class="colon">:</span>
+                    <span id="seconds">00</span>
+                    <div class="arrow-column">
+                         <button class="arrow-btn up" data-unit="seconds" data-change="1">▲</button>
+                         <button class="arrow-btn down" data-unit="seconds" data-change="-1">▼</button>
+                    </div>
+                </div>
+                
+                <div class="quick-add">
+                    <button class="time-btn" data-seconds="300">+5분</button>
+                    <button class="time-btn" data-seconds="-300">-5분</button>
+                    <button class="time-btn" data-seconds="10">+10초</button>
+                    <button class="time-btn" data-seconds="-10">-10초</button>
+                </div>
+                <div class="controls">
+                    <button id="start-pause-btn">시작</button>
+                    <button id="reset-btn" disabled>리셋</button>
+                </div>
+            </div>
+            <button class="mode-btn" id="mode-public">지명 시간</button>
+        </div>
     </div>
 </div>
 
 <script>
+    // --- 인원 선택 관련 요소 ---
+    const playerCountSelect = document.getElementById('player-count');
+    const roleSpans = [
+        document.getElementById('role1'),
+        document.getElementById('role2'),
+        document.getElementById('role3'),
+        document.getElementById('role4')
+    ];
+    const roleData = {
+        5: [3, 0, 1, 1], 6: [3, 1, 1, 1], 7: [5, 0, 1, 1],
+        8: [5, 1, 1, 1], 9: [5, 2, 1, 1], 10: [7, 0, 2, 1],
+        11: [7, 1, 2, 1], 12: [7, 2, 2, 1], 13: [9, 0, 3, 1],
+        14: [9, 1, 3, 1], 15: [9, 2, 3, 1]
+    };
+
+    // --- 타이머 관련 요소 ---
     const displayElement = document.querySelector('.display');
     const minutesDisplay = document.getElementById('minutes');
     const secondsDisplay = document.getElementById('seconds');
@@ -253,6 +349,8 @@
     let timerInterval = null;
     let totalSeconds = 0;
 
+    // --- 이벤트 리스너 ---
+    playerCountSelect.addEventListener('change', updateRoleCounts);
     startPauseBtn.addEventListener('click', () => {
         if (timerInterval) {
             pauseTimer();
@@ -260,16 +358,12 @@
             startTimer();
         }
     });
-
     resetBtn.addEventListener('click', resetTimer);
-    
     modePrivateBtn.addEventListener('click', () => switchMode(modePrivateBtn));
     modePublicBtn.addEventListener('click', () => switchMode(modePublicBtn));
-
     adjustmentButtons.forEach(button => {
         button.addEventListener('click', () => {
             if (timerInterval) return;
-            
             let secondsToAdjust = 0;
             if (button.classList.contains('arrow-btn')) {
                 const unit = button.dataset.unit;
@@ -281,6 +375,15 @@
             adjustTime(secondsToAdjust);
         });
     });
+
+    // --- 함수들 ---
+    function updateRoleCounts() {
+        const count = playerCountSelect.value;
+        const roles = roleData[count];
+        roleSpans.forEach((span, index) => {
+            span.textContent = roles[index];
+        });
+    }
 
     function switchMode(selectedButton) {
         modePrivateBtn.classList.remove('active');
@@ -302,13 +405,11 @@
             alert("시간을 설정해주세요.");
             return;
         }
-        
         displayElement.classList.remove('finished');
         startPauseBtn.textContent = '일시정지';
         startPauseBtn.classList.add('pause');
         setAdjustmentButtonsState(true);
         setModeButtonsState(true);
-
         timerInterval = setInterval(countdown, 1000);
     }
 
@@ -326,7 +427,6 @@
         timerInterval = null;
         totalSeconds = 0;
         updateDisplay(totalSeconds);
-        
         startPauseBtn.textContent = '시작';
         startPauseBtn.classList.remove('pause');
         resetBtn.disabled = true;
@@ -338,7 +438,6 @@
     function countdown() {
         totalSeconds--;
         updateDisplay(totalSeconds);
-
         if (totalSeconds <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
@@ -349,7 +448,6 @@
     function finishTimer() {
         displayElement.classList.add('finished');
         playSound();
-
         setTimeout(resetTimer, 6000); 
     }
 
@@ -375,28 +473,26 @@
         try {
             const volume = new Tone.Volume(12).toDestination();
             const reverb = new Tone.Reverb(4).connect(volume);
-            
             const synth = new Tone.MembraneSynth({
                 pitchDecay: 0.1,
                 octaves: 6,
                 envelope: { attack: 0.01, decay: 0.8, sustain: 0.1, release: 2 }
             }).connect(reverb);
-
             const bellSequence = new Tone.Sequence((time, note) => {
                 synth.triggerAttackRelease(note, "1n", time);
             }, ["G2", "G2", "G2", "G2"], "1.5s").start(0);
-
             Tone.Transport.start();
-
             Tone.Transport.scheduleOnce(() => {
                 Tone.Transport.stop();
                 bellSequence.dispose();
             }, 6);
-
         } catch (e) {
             console.error("알림음 재생에 실패했습니다.", e);
         }
     }
+    
+    // 페이지 로드 시 초기 역할군 숫자 표시
+    updateRoleCounts();
 </script>
 
 </body>
